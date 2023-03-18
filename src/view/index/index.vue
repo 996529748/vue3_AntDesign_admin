@@ -17,6 +17,7 @@
 </template>
 <script setup lang="ts">
 import { register } from "api/home";
+
 // 用户注册
 const registerFn = (): void => {
   const params: RegisterParamsType = {

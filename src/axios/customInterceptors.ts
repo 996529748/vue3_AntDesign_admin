@@ -1,17 +1,18 @@
 import type { AxiosInstance, AxiosError } from "axios";
 import axios from "axios";
 import type customRequestConfig from "./type";
-// import { getErrMessage } from "./errCode";
+// import { getErrMessage } from "./errCode";//根据状态码返回对应报错
+import { createLoading } from "@/common/loading";
 // import { Toast } from "vant";
 
-// type toastInstance = ReturnType<typeof Toast.loading>; //取 Toast.loading 值的返回值，既  var Toast.loading: (options: string | ToastOptions) => ComponentInstance
+type loadingInstance = ReturnType<typeof createLoading>; //取 Toast.loading 值的返回值，既  var Toast.loading: (options: string | ToastOptions) => ComponentInstance
 
 const DEFAULT_LOADING = true; //默认loading显示 or 隐藏的变量
 
 class customInterceptors {
   instance: AxiosInstance;
   showLoading: boolean;
-  // toastInstance: toastInstance | undefined;
+  loadingInstance: loadingInstance | undefined;
 
   constructor(config: customRequestConfig) {
     this.instance = axios.create(config); //根据传入配置手动创建实例
@@ -23,18 +24,15 @@ class customInterceptors {
     this.instance.interceptors.request.use(
       (res) => {
         if (this.showLoading) {
-          //创建toast实例
-          // this.toastInstance = Toast.loading({
-          //   duration: 0,
-          //   message: "加载中...",
-          //   forbidClick: true,
-          // });
+          //创建loading实例
+          this.loadingInstance = createLoading();
+          this.loadingInstance.showLoading();
         }
         return res;
       },
 
       (err) => {
-        // this.toastInstance?.clear();
+        this.loadingInstance?.hideLoading();
         console.log(err);
       }
     );
@@ -42,16 +40,18 @@ class customInterceptors {
     this.instance.interceptors.response.use(
       (res) => {
         setTimeout(() => {
-          // this.toastInstance?.clear();
+          this.loadingInstance?.hideLoading();
         }, 1000);
         //TODO
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return res.data;
       },
 
-      (error: AxiosError) =>
-        // this.toastInstance?.clear();
-        error.response?.data
+      (error: AxiosError) => {
+        this.loadingInstance?.hideLoading();
+
+        return error.response?.data;
+      }
     );
   }
 
