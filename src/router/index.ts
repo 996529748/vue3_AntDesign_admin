@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    redirect: "index",
+    redirect: "login",
   },
   {
     path: "/index",
@@ -12,6 +12,16 @@ const routes: RouteRecordRaw[] = [
     component: () => import("view/index/index.vue"),
     meta: {
       title: "This is a demo",
+      description: "This is a demo",
+      keywords: "This is a demo",
+    },
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: () => import("@/view/login/Login.vue"),
+    meta: {
+      title: "登录",
       description: "This is a demo",
       keywords: "This is a demo",
     },

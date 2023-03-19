@@ -5,6 +5,8 @@ import ViteComponents from "unplugin-vue-components/vite"; //自动导入组件
 import { createHtmlPlugin } from "vite-plugin-html"; //CDN
 import externalGlobals from "rollup-plugin-external-globals";//CDN
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'//SVG
+import path from 'path'
 // 查看打包大小插件
 import { visualizer } from 'rollup-plugin-visualizer';
 // viteRollup插件文档：https://vite-rollup-plugins.patak.dev/
@@ -20,6 +22,13 @@ export default defineConfig({
   plugins: [
     vue(),
     commonjs(),
+    //SVG
+    createSvgIconsPlugin({
+       // 指定需要缓存的图标文件夹
+       iconDirs: [path.resolve(process.cwd(), './src/assets/icons')],
+       // 指定symbolId格式
+       symbolId: 'icon-[dir]-[name]',
+    }),
     visualizer({ open: true }),
     AutoImport({
       // 这里除了引入 vue 以外还可以引入pinia、vue-router、vueuse等，
