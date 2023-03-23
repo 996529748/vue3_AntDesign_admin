@@ -1,8 +1,9 @@
-import type { AxiosInstance, AxiosError } from "axios";
+import type { AxiosInstance, AxiosError, AxiosRequestConfig } from "axios";
 import axios from "axios";
-import type customRequestConfig from "./type";
+import type { customRequestConfig, TokenConfigType } from "./type";
 // import { getErrMessage } from "./errCode";//根据状态码返回对应报错
 import { createLoading } from "@/common/loading";
+import { TokenConfig } from "./config";
 // import { Toast } from "vant";
 
 type loadingInstance = ReturnType<typeof createLoading>; //取 Toast.loading 值的返回值，既  var Toast.loading: (options: string | ToastOptions) => ComponentInstance
@@ -20,15 +21,33 @@ class customInterceptors {
     this.init();
   }
 
+  //设置请求头
+  setHeaderConfig = (
+    TokenConfig: TokenConfigType,
+    config: AxiosRequestConfig
+  ): TokenConfigType => {
+    const tokenKey = TokenConfig.tokenKey;
+
+    //配置token
+    config.headers![tokenKey] = TokenConfig.tokenValue;
+    return TokenConfig;
+  };
+
   init(): void {
     this.instance.interceptors.request.use(
-      (res) => {
+      //全局请求拦截器
+      (config) => {
+        //设置token
+        if (TokenConfig) {
+          this.setHeaderConfig(TokenConfig, config);
+        }
+
         if (this.showLoading) {
           //创建loading实例
           this.loadingInstance = createLoading();
           this.loadingInstance.showLoading();
         }
-        return res;
+        return config;
       },
 
       (err) => {
@@ -38,6 +57,7 @@ class customInterceptors {
     );
 
     this.instance.interceptors.response.use(
+      //全局响应拦截器
       (res) => {
         setTimeout(() => {
           this.loadingInstance?.hideLoading();

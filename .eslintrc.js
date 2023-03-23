@@ -239,7 +239,7 @@ module.exports = {
     //不允许在可选链表达式后使用非空断言。
     "@typescript-eslint/no-non-null-asserted-optional-chain": "error",
     //禁止使用后缀运算符进行非空断言
-    "@typescript-eslint/no-non-null-assertion": "error",
+    "@typescript-eslint/no-non-null-assertion": "off",
     //禁止调用require()
     "@typescript-eslint/no-require-imports": "error",
     //禁止this别名
